@@ -1,0 +1,26 @@
+server:
+  port: 9090
+
+jwt:
+  secret: "mySuperSecretKeyThatIsAtLeast32CharactersLong!"
+  expiration: 86400000
+
+spring:
+  messages:
+    basename: i18n/masseges
+    encoding: UTF-8
+
+  datasource:
+    driver-class-name: oracle.jdbc.OracleDriver
+    url: jdbc:oracle:thin:@//localhost:1521/orclpdb
+    username: hr
+    password: hr123
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+  redis:
+    host: localhost
+    port: 6379
