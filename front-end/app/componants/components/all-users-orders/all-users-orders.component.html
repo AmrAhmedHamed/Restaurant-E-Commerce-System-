@@ -1,0 +1,134 @@
+<div *ngIf="usersOrders">
+  <!-- Header Statistics -->
+  <div class="admin-header">
+    <h1><i class="fa fa-users"></i> All Users Orders History</h1>
+    <div class="stats">
+      <div class="stat-card">
+        <i class="fa fa-users text-primary"></i>
+        <div>
+          <h3>{{totalElements}}</h3>
+          <p>Total Users</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <i class="fa fa-file-alt text-success"></i>
+        <div>
+          <h3>{{calculateTotalOrders()}}</h3>
+          <p>Total Orders</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <i class="fa fa-money-bill-wave text-danger"></i>
+        <div>
+          <h3>{{calculateTotalSpent() | currency}}</h3>
+          <p>Total Revenue</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Users List -->
+  <div class="users-container">
+    <div *ngFor="let user of usersOrders.content" class="user-card">
+      <!-- User Header -->
+      <div class="user-header" [class.no-orders]="user.orders.length === 0">
+        <div class="user-info">
+          <div class="avatar">{{user.username?.charAt(0) | uppercase}}</div>
+          <div>
+            <h3>{{user.username}}
+              <span class="badge bg-secondary">ID: {{user.userId}}</span>
+            </h3>
+            <p class="user-stats">
+              <span class="orders-count">
+                <i class="fa fa-box"></i> {{user.totalOrders}} Orders
+              </span>
+              <span class="spent-amount">
+                <i class="fa fa-money-bill"></i> {{user.totalSpent | currency}}
+              </span>
+            </p>
+          </div>
+        </div>
+        <div class="user-summary">
+          <div class="summary-item">
+            <small>Avg. Order Value</small>
+            <strong>{{(user.totalOrders > 0 ? user.totalSpent / user.totalOrders : 0) | currency}}</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- User's Orders (if any) -->
+      <div *ngIf="user.orders.length > 0" class="user-orders">
+        <div *ngFor="let order of user.orders" class="order-item">
+          <div class="order-header">
+            <h4>{{order.code}}</h4>
+            <div class="order-meta">
+              <span class="date">{{order.createdAt | date:'medium'}}</span>
+              <span class="badge bg-info">Items: {{order.totalNumber}}</span>
+              <span class="badge bg-success">Total: {{order.totalPrice | currency}}</span>
+            </div>
+          </div>
+
+          <div class="products-grid">
+            <div *ngFor="let product of order.products" class="product-item">
+              <img src="../../../../assets/img/{{product.imagePath}}"
+                   [alt]="product.name"
+                   (error)="handleImageError($event)">
+              <div class="product-details">
+                <h5>{{product.name}}</h5>
+                <p class="description">{{product.descrip | slice:0:80}}...</p>
+                <div class="product-footer">
+                  <span class="category">Category: {{product.categoryId}}</span>
+                  <span class="price">{{product.price | currency}}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- No Orders Message -->
+      <div *ngIf="user.orders.length === 0" class="no-orders-message">
+        <i class="fa fa-inbox fa-2x"></i>
+        <p>No orders yet</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <div *ngIf="totalPages > 1" class="pagination-container">
+    <nav aria-label="Page navigation">
+      <ul class="pagination">
+        <li class="page-item" [class.disabled]="page === 1">
+          <a class="page-link" (click)="changePage(page - 1)">
+            <i class="fa fa-chevron-left"></i>
+          </a>
+        </li>
+
+        <li *ngFor="let p of getPageNumbers()"
+            class="page-item"
+            [class.active]="p === page">
+          <a class="page-link" (click)="changePage(p)">{{p}}</a>
+        </li>
+
+        <li class="page-item" [class.disabled]="page === totalPages">
+          <a class="page-link" (click)="changePage(page + 1)">
+            <i class="fa fa-chevron-right"></i>
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="page-info">
+      Showing page {{page}} of {{totalPages}}
+      ({{usersOrders.content.length}} of {{totalElements}} users)
+    </div>
+  </div>
+</div>
+
+<!-- Loading State -->
+<div *ngIf="!usersOrders" class="loading-container">
+  <div class="spinner-border text-primary" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+  <p>Loading users orders history...</p>
+</div>

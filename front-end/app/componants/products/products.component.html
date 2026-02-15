@@ -1,0 +1,206 @@
+<!-- Modal لعرض التفاصيل -->
+<ng-template #productDetailsModal let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title">
+      <i class="fas fa-info-circle me-2"></i>تفاصيل المنتج
+    </h5>
+    <button type="button" class="btn-close" (click)="modal.dismiss()"></button>
+  </div>
+
+  <div class="modal-body">
+
+    <!-- معلومات المنتج الأساسية -->
+    <div class="row mb-4" *ngIf="selectedProductForModal">
+      <div class="col-md-4">
+        <img [src]="'../../../assets/img/' + selectedProductForModal.imagePath"
+             class="img-fluid rounded shadow"
+             [alt]="selectedProductForModal.name"
+             style="max-height: 200px; object-fit: cover;">
+      </div>
+      <div class="col-md-8">
+        <h4 class="text-primary">{{selectedProductForModal.name}}</h4>
+        <p class="text-muted">{{selectedProductForModal.descrip}}</p>
+        <h5 class="text-success">{{selectedProductForModal.price}} ج.م</h5>
+      </div>
+    </div>
+
+    <!-- تفاصيل المنتج التقنية -->
+    <div *ngIf="selectedProductDetails; else noDetails">
+      <h6 class="border-bottom pb-2 mb-3">تفاصيل المنتج التقنية</h6>
+
+      <div class="row">
+        <div class="col-md-6 mb-2">
+          <strong><i class="fas fa-weight text-primary me-1"></i> الوزن:</strong>
+          <span class="ms-2">{{selectedProductDetails.weight}} جرام</span>
+        </div>
+        <div class="col-md-6 mb-2">
+          <strong><i class="fas fa-ruler-combined text-primary me-1"></i> الأبعاد:</strong>
+          <span class="ms-2">{{selectedProductDetails.dimensions}}</span>
+        </div>
+
+        <div class="col-md-6 mb-2">
+          <strong><i class="fas fa-palette text-primary me-1"></i> اللون:</strong>
+          <span class="ms-2">{{selectedProductDetails.color}}</span>
+        </div>
+        <div class="col-md-6 mb-2">
+          <strong><i class="fas fa-cube text-primary me-1"></i> المادة:</strong>
+          <span class="ms-2">{{selectedProductDetails.material}}</span>
+        </div>
+
+        <div class="col-md-6 mb-2">
+          <strong><i class="fas fa-industry text-primary me-1"></i> الشركة المصنعة:</strong>
+          <span class="ms-2">{{selectedProductDetails.manufacturer}}</span>
+        </div>
+        <div class="col-md-6 mb-2">
+          <strong><i class="fas fa-globe text-primary me-1"></i> بلد المنشأ:</strong>
+          <span class="ms-2">{{selectedProductDetails.originCountry}}</span>
+        </div>
+
+        <div class="col-md-6 mb-2">
+          <strong><i class="fas fa-shield-alt text-primary me-1"></i> فترة الضمان:</strong>
+          <span class="ms-2">{{selectedProductDetails.warrantyPeriod}} شهر</span>
+        </div>
+      </div>
+
+      <!-- معلومات إضافية -->
+      <div *ngIf="selectedProductDetails.additionalInfo" class="mt-3">
+        <h6 class="border-bottom pb-2 mb-2">معلومات إضافية</h6>
+        <p class="text-muted">{{selectedProductDetails.additionalInfo}}</p>
+      </div>
+    </div>
+
+    <ng-template #noDetails>
+      <div class="alert alert-warning text-center py-4">
+        <i class="fas fa-exclamation-triangle fa-2x mb-3"></i>
+        <h6>لا توجد تفاصيل لهذا المنتج</h6>
+        <p class="mb-0">لم يتم إضافة تفاصيل تقنية لهذا المنتج بعد.</p>
+
+        <!-- للمسؤولين فقط: زر إضافة تفاصيل -->
+        <div *ngIf="isAdmin() && selectedProductForModal" class="mt-3">
+          <button class="btn btn-sm btn-primary"
+                  [routerLink]="['/add-product-details']"
+                  [queryParams]="{productId: selectedProductForModal.id}"
+                  (click)="modal.dismiss()">
+            <i class="fas fa-plus me-1"></i>إضافة تفاصيل
+          </button>
+        </div>
+      </div>
+    </ng-template>
+  </div>
+
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">
+      <i class="fas fa-times me-1"></i>إغلاق
+    </button>
+
+    <!-- للمسؤولين فقط: زر تعديل التفاصيل -->
+    <button *ngIf="isAdmin() && selectedProductDetails" type="button"
+            class="btn btn-warning"
+            [routerLink]="['/edit-product-details', selectedProductDetails.productId]"
+            (click)="modal.dismiss()">
+      <i class="fas fa-edit me-1"></i>تعديل التفاصيل
+    </button>
+  </div>
+</ng-template>
+
+<div class="tab-content">
+  <div id="tab-1" class="tab-pane fade show p-0 active">
+    <div class="row g-4">
+      <div *ngFor="let pro of protects" class="col-lg-6 col-md-6">
+        <div class="d-flex align-items-center border rounded p-3 bg-white shadow-sm product-item">
+          <img
+            class="flex-shrink-0 img-fluid rounded"
+            src="../../../assets/img/{{pro.imagePath}}"
+            alt="{{pro.name}}"
+            style="width: 80px; height: 80px; object-fit: cover;"
+          />
+
+          <div class="w-100 d-flex flex-column text-start ps-4">
+            <h5 class="d-flex justify-content-between border-bottom pb-2 mb-2">
+              <span>{{ pro.name }}</span>
+              <span class="text-primary">{{ pro.price }} ج.م</span>
+            </h5>
+            <small class="fst-italic text-muted mb-2">{{ pro.descrip }}</small>
+
+            <div class="mt-auto d-flex gap-2 flex-wrap">
+              <!-- زر إضافة إلى السلة (لجميع المستخدمين) -->
+              <button type="button" class="btn btn-success btn-sm"
+                      (click)="addProduct(pro)"
+                      title="أضف إلى السلة">
+                <i class="fa fa-cart-plus"></i>
+              </button>
+
+              <!-- زر عرض التفاصيل (لجميع المستخدمين) -->
+              <button type="button" class="btn btn-info btn-sm"
+                      (click)="showProductDetails(pro)"
+                      title="عرض تفاصيل المنتج">
+                <i class="fa fa-info-circle"></i>
+              </button>
+
+              <!-- أزرار للمسؤولين فقط -->
+              <ng-container *ngIf="isAdmin()">
+                <!-- زر إدارة التفاصيل -->
+                <button type="button"
+                        class="btn btn-primary btn-sm"
+                        (click)="manageProductDetails(pro)"
+                        title="إدارة تفاصيل المنتج">
+                  <i class="fa fa-cogs"></i>
+                </button>
+
+                <!-- زر تعديل المنتج -->
+                <button type="button"
+                        class="btn btn-warning btn-sm"
+                        (click)="editProduct(pro)"
+                        title="تعديل المنتج">
+                  <i class="fa fa-edit"></i>
+                </button>
+
+                <!-- زر حذف المنتج -->
+                <button type="button"
+                        class="btn btn-danger btn-sm"
+                        (click)="deleteProduct(pro)"
+                        title="حذف المنتج">
+                  <i class="fa fa-trash"></i>
+                </button>
+              </ng-container>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- رسالة إذا لم يكن هناك منتجات -->
+    <div *ngIf="protects.length === 0" class="text-center py-5">
+      <i class="fa fa-box-open fa-3x text-muted mb-3"></i>
+      <h5 class="text-muted">لا توجد منتجات</h5>
+      <p class="text-muted">حاول تغيير معايير البحث أو الفلتر</p>
+    </div>
+
+    <!-- Pagination -->
+    <div class="row mt-4">
+      <div class="col-md-9 pag" style="padding-left: 30%">
+        <ngb-pagination
+          [(page)]="pageNumber"
+          [pageSize]="pageSize"
+          [collectionSize]="totalProductSize"
+          (pageChange)="pagination()"
+          [maxSize]="5"
+          [boundaryLinks]="true"
+        ></ngb-pagination>
+      </div>
+
+      <div class="col-md-9 pag" style="padding-left: 30%">
+        <div class="sel">
+          <span class="mr-2">حجم الصفحة:</span>
+          <select (change)="changePageSize($event)" class="form-select form-select-sm d-inline-block w-auto">
+            <option value="2">2</option>
+            <option value="5">5</option>
+            <option value="10" selected>10</option>
+            <option value="20">20</option>
+            <option value="50">50</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

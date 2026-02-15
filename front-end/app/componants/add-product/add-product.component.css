@@ -1,0 +1,155 @@
+/* Main container styles */
+.tab-content {
+  min-height: 80vh;
+  background-color: #f8f9fa;
+}
+
+.tab-pane {
+  padding: 20px 0;
+}
+
+/* Card styles */
+.card {
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background: white;
+}
+
+.card-body {
+  padding: 30px;
+}
+
+/* Form heading */
+h5 {
+  color: #333;
+  font-weight: 600;
+  font-size: 1.5rem;
+}
+
+.border-bottom {
+  border-bottom: 2px solid #e0e0e0 !important;
+  padding-bottom: 15px;
+  margin-bottom: 25px;
+}
+
+/* Form labels */
+.form-label {
+  font-weight: 500;
+  color: #555;
+  margin-bottom: 8px;
+  font-size: 0.95rem;
+}
+
+/* Form inputs */
+.form-control {
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 10px 15px;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  background-color: #fff;
+}
+
+.form-control:focus {
+  border-color: #4e73df;
+  box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+  outline: none;
+}
+
+/* Textarea specific */
+textarea.form-control {
+  min-height: 100px;
+  resize: vertical;
+}
+
+/* Button styles */
+.btn {
+  border-radius: 6px;
+  padding: 8px 20px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  border: none;
+  font-size: 0.9rem;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #224abe 0%, #4e73df 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(78, 115, 223, 0.3);
+}
+
+.btn-secondary {
+  background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+}
+
+.btn-secondary:hover {
+  background: linear-gradient(135deg, #5a6268 0%, #6c757d 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(108, 117, 125, 0.3);
+}
+
+/* Button icons */
+.btn i {
+  font-size: 0.9rem;
+}
+
+/* Button group spacing */
+.d-flex.gap-2.flex-wrap {
+  gap: 12px !important;
+  margin-top: 25px;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .card-body {
+    padding: 20px;
+  }
+
+  .row.g-4 {
+    margin: 0;
+  }
+
+  .col-lg-6 {
+    padding: 10px;
+  }
+
+  .btn {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  .d-flex.gap-2.flex-wrap {
+    flex-direction: column;
+  }
+}
+
+/* Number input styling */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* Row spacing */
+.g-2 > [class*="col-"] {
+  padding: 0 8px;
+}
+
+/* Margin adjustments */
+.mb-3, .mb-4 {
+  margin-bottom: 1.2rem !important;
+}
+
+/* Submit button specific */
+button[type="submit"] {
+  min-width: 140px;
+}

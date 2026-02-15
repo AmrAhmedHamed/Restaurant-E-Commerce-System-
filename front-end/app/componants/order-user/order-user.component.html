@@ -1,0 +1,35 @@
+<div *ngIf="orders">
+  <div class="summary">
+    <div>
+      <h1>User Orders</h1>
+      <p>Total Orders: {{orders.totalOrders}}</p>
+    </div>
+    <div>
+      <strong>Total Price: {{orders.totalPrice}}</strong>
+    </div>
+  </div>
+
+  <div class="orders">
+    <div *ngFor="let order of orders.orders" class="order-card">
+      <h2>{{order.code}}</h2>
+      <div class="order-meta">Items: {{order.totalNumber}} • Total: {{order.totalPrice}}</div>
+      <div class="products">
+        <div *ngFor="let product of order.products" class="product">
+          <img src="../../../assets/img/{{product.imagePath}}" alt="{{product.name}}">
+          <div class="product-info">
+            <h4>{{product.name}}</h4>
+            <p>{{product.descrip}}</p> <!-- ملاحظة: descrip وليس description -->
+            <div class="product-footer">
+              <span class="badge">{{product.categoryId}}</span> <!-- categoryId وليس category.name -->
+              <span>{{product.price}}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="!orders" class="loading">
+  Loading orders...
+</div>

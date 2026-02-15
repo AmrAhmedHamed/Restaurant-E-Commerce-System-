@@ -1,0 +1,161 @@
+<div class="tab-content" xmlns="http://www.w3.org/1999/html">
+  <div id="tab-1" class="tab-pane fade show p-0 active">
+    <div class="row g-4">
+      <div class="col-lg-8 col-md-8 mx-auto">
+        <div class="card shadow">
+          <div class="card-header bg-primary text-white">
+            <h4 class="mb-0 text-center">
+              <i class="fa fa-plus-circle me-2"></i>إضافة منتج جديد
+            </h4>
+          </div>
+          <div class="card-body">
+
+            <!-- زر للاختبار -->
+            <div class="mb-3">
+              <button class="btn btn-info btn-sm" (click)="testData()">
+                <i class="fa fa-flask me-1"></i>تحميل بيانات تجريبية
+              </button>
+              <small class="text-muted ms-2">(للتجربة فقط)</small>
+            </div>
+
+            <form #productForm="ngForm" (ngSubmit)="addProduct()" novalidate>
+
+              <!-- اسم المنتج -->
+              <div class="mb-3">
+                <label class="form-label fw-bold">اسم المنتج *</label>
+                <input type="text" class="form-control"
+                       [(ngModel)]="product.name"
+                       name="name"
+                       required
+                       placeholder="أدخل اسم المنتج">
+                <small class="text-muted">مثال: بيتزا مارجريتا، برجر لحم</small>
+              </div>
+
+              <!-- الوصف -->
+              <div class="mb-3">
+                <label class="form-label fw-bold">الوصف</label>
+                <textarea class="form-control" rows="3"
+                          [(ngModel)]="product.descrip"
+                          name="descrip"
+                          placeholder="أدخل وصف المنتج..."></textarea>
+                <small class="text-muted">الوصف الحالي: "{{product.descrip || 'لم يتم إدخال وصف'}}"</small>
+              </div>
+
+              <!-- السعر والفئة -->
+              <div class="row g-2">
+                <div class="col-md-6 mb-3">
+                  <label class="form-label fw-bold">السعر (ج.م) *</label>
+                  <input type="number" class="form-control"
+                         [(ngModel)]="product.price"
+                         name="price"
+                         min="0.01"
+                         step="0.01"
+                         required
+                         placeholder="0.00">
+                  <small class="text-muted">السعر: {{product.price || 0}} ج.م</small>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                  <label class="form-label fw-bold">الفئة *</label>
+                  <select class="form-control"
+                          [(ngModel)]="product.categoryId"
+                          name="categoryId"
+                          required>
+                    <option value="" disabled selected>اختر الفئة</option>
+                    <option *ngFor="let cat of categories" [value]="cat.id">
+                      {{cat.name}}
+                    </option>
+                  </select>
+                  <small class="text-muted">الفئة المختارة: {{product.categoryId || 'لم يتم الاختيار'}}</small>
+                </div>
+              </div>
+
+              <!-- مسار الصورة -->
+              <div class="mb-4">
+                <label class="form-label fw-bold">مسار الصورة *</label>
+                <input type="text" class="form-control"
+                       [(ngModel)]="product.imagePath"
+                       name="imagePath"
+                       required
+                       placeholder="foods/ricewithmeat.jpg">
+                <small class="text-muted">مسار الصورة: "{{product.imagePath || 'لم يتم إدخال مسار'}}"</small>
+              </div>
+
+              <!-- أزرار -->
+              <div class="d-flex gap-2 flex-wrap justify-content-end mt-4">
+                <button type="submit" class="btn btn-success px-4"
+                        [disabled]="!productForm.form.valid || isLoading">
+                  <span *ngIf="!isLoading">
+                    <i class="fa fa-plus-circle me-2"></i>إضافة المنتج
+                  </span>
+                  <span *ngIf="isLoading">
+                    <i class="fa fa-spinner fa-spin me-2"></i>جاري الإضافة...
+                  </span>
+                </button>
+
+                <button type="button" class="btn btn-secondary px-4"
+                        [routerLink]="['/products']">
+                  <i class="fa fa-times me-2"></i>إلغاء
+                </button>
+              </div>
+            </form>
+
+            <!-- قسم التصحيح -->
+            <div class="mt-4 p-3 border rounded bg-light">
+              <h6 class="border-bottom pb-2">
+                <i class="fa fa-bug me-2"></i>معلومات التصحيح
+              </h6>
+
+              <div class="row">
+                <div class="col-md-6 mb-2">
+                  <strong>النموذج صالح:</strong>
+                  <span [class.text-success]="productForm.form.valid"
+                        [class.text-danger]="!productForm.form.valid">
+                    {{productForm.form.valid ? '✅ نعم' : '❌ لا'}}
+                  </span>
+                </div>
+                <div class="col-md-6 mb-2">
+                  <strong>حالة التحميل:</strong>
+                  <span [class.text-success]="!isLoading"
+                        [class.text-danger]="isLoading">
+                    {{isLoading ? '⏳ جاري العمل...' : '✅ جاهز'}}
+                  </span>
+                </div>
+                <div class="col-md-6 mb-2">
+                  <strong>السعر > 0:</strong>
+                  <span [class.text-success]="product.price > 0"
+                        [class.text-danger]="product.price <= 0">
+                    {{product.price > 0 ? '✅ نعم' : '❌ لا'}}
+                  </span>
+                </div>
+                <div class="col-md-6 mb-2">
+                  <strong>الفئة محددة:</strong>
+                  <span [class.text-success]="product.categoryId"
+                        [class.text-danger]="!product.categoryId">
+                    {{product.categoryId ? '✅ نعم' : '❌ لا'}}
+                  </span>
+                </div>
+              </div>
+
+              <h6 class="mt-3 mb-2">📦 البيانات المرسلة للباكيند:</h6>
+              <div class="bg-dark text-white p-3 rounded">
+                <pre style="font-size: 12px; margin: 0;">
+الاسم: {{product.name}}
+                  الوصف: {{product.descrip}}
+                  السعر: {{product.price}}
+                  مسار الصورة: {{product.imagePath}}
+                  معرف الفئة: {{product.categoryId}}
+                </pre>
+              </div>
+
+              <div *ngIf="isLoading" class="alert alert-info mt-3">
+                <i class="fa fa-spinner fa-spin me-2"></i> جاري إرسال البيانات للخادم...
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

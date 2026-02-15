@@ -1,0 +1,204 @@
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+          <h4 class="mb-0">
+            <i class="fas fa-info-circle me-2"></i>
+            {{ mode === 'add' ? 'إضافة تفاصيل المنتج' : 'تعديل تفاصيل المنتج' }}
+          </h4>
+        </div>
+        <div class="card-body">
+
+          <!-- زر الرجوع -->
+          <div class="mb-3">
+            <button type="button" class="btn btn-secondary btn-sm" (click)="goBack()">
+              <i class="fas fa-arrow-left me-1"></i> العودة للمنتجات
+            </button>
+
+            <button *ngIf="mode === 'add'" type="button" class="btn btn-info btn-sm ms-2" (click)="loadTestData()">
+              <i class="fas fa-flask me-1"></i> تحميل بيانات تجريبية
+            </button>
+          </div>
+
+          <form #detailsForm="ngForm" (ngSubmit)="saveProductDetails()" novalidate>
+
+            <!-- معرف المنتج -->
+            <div class="mb-3">
+              <label class="form-label">معرف المنتج (Product ID) *</label>
+              <div class="input-group">
+                <input type="number" class="form-control"
+                       [(ngModel)]="productDetails.productId"
+                       name="productId"
+                       min="1"
+                       required
+                       placeholder="أدخل رقم المنتج">
+                <button class="btn btn-outline-secondary" type="button"
+                        (click)="suggestProductIds()"
+                        title="اقتراح معرفات">
+                  <i class="fas fa-lightbulb"></i>
+                </button>
+              </div>
+              <small class="text-muted">أدخل معرف المنتج الذي تريد إضافة تفاصيل له</small>
+            </div>
+
+            <!-- زر التحقق من المنتج -->
+            <div class="mb-3">
+              <button type="button" class="btn btn-info btn-sm"
+                      (click)="verifyProduct()"
+                      [disabled]="!productDetails.productId || productDetails.productId <= 0">
+                <i class="fas fa-check me-1"></i> تحقق من المنتج
+              </button>
+              <small class="text-muted ms-2">اضغط للتحقق من وجود المنتج</small>
+            </div>
+
+            <!-- عرض معلومات المنتج إذا كان موجوداً -->
+            <div *ngIf="selectedProduct" class="alert alert-info mb-3">
+              <h6>المنتج المحدد:</h6>
+              <p class="mb-1"><strong>الاسم:</strong> {{ selectedProduct.name }}</p>
+              <p class="mb-1"><strong>السعر:</strong> {{ selectedProduct.price }} ج.م</p>
+              <p class="mb-1"><strong>الوصف:</strong> {{ selectedProduct.descrip }}</p>
+              <p class="mb-0"><strong>معرف المنتج:</strong> {{ selectedProduct.id }}</p>
+            </div>
+
+            <!-- وزن المنتج -->
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label">الوزن (جرام) *</label>
+                <input type="number" class="form-control"
+                       [(ngModel)]="productDetails.weight"
+                       name="weight"
+                       min="1"
+                       step="0.1"
+                       required>
+                <small class="text-muted">أدخل الوزن بالجرام</small>
+              </div>
+
+              <!-- الأبعاد -->
+              <div class="col-md-6 mb-3">
+                <label class="form-label">الأبعاد *</label>
+                <input type="text" class="form-control"
+                       [(ngModel)]="productDetails.dimensions"
+                       name="dimensions"
+                       placeholder="مثال: 20x15x10 سم"
+                       required>
+                <small class="text-muted">أدخل الأبعاد (الطول × العرض × الارتفاع)</small>
+              </div>
+            </div>
+
+            <!-- اللون والمادة -->
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label">اللون</label>
+                <input type="text" class="form-control"
+                       [(ngModel)]="productDetails.color"
+                       name="color"
+                       placeholder="أدخل اللون">
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label class="form-label">المادة</label>
+                <input type="text" class="form-control"
+                       [(ngModel)]="productDetails.material"
+                       name="material"
+                       placeholder="أدخل المادة">
+              </div>
+            </div>
+
+            <!-- الشركة المصنعة وبلد المنشأ -->
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label">الشركة المصنعة</label>
+                <input type="text" class="form-control"
+                       [(ngModel)]="productDetails.manufacturer"
+                       name="manufacturer"
+                       placeholder="أدخل اسم الشركة المصنعة">
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label class="form-label">بلد المنشأ</label>
+                <input type="text" class="form-control"
+                       [(ngModel)]="productDetails.originCountry"
+                       name="originCountry"
+                       placeholder="أدخل بلد المنشأ">
+              </div>
+            </div>
+
+            <!-- فترة الضمان -->
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label">فترة الضمان (شهر)</label>
+                <input type="number" class="form-control"
+                       [(ngModel)]="productDetails.warrantyPeriod"
+                       name="warrantyPeriod"
+                       min="0"
+                       placeholder="0">
+                <small class="text-muted">أدخل فترة الضمان بالأشهر (0 يعني بدون ضمان)</small>
+              </div>
+            </div>
+
+            <!-- معلومات إضافية -->
+            <div class="mb-3">
+              <label class="form-label">معلومات إضافية</label>
+              <textarea class="form-control" rows="4"
+                        [(ngModel)]="productDetails.additionalInfo"
+                        name="additionalInfo"
+                        placeholder="أدخل أي معلومات إضافية عن المنتج..."></textarea>
+            </div>
+
+            <!-- أزرار الحفظ -->
+            <div class="d-flex gap-2 justify-content-end mt-4">
+              <button type="submit" class="btn btn-primary px-4"
+                      [disabled]="!detailsForm.form.valid || isLoading">
+                <span *ngIf="!isLoading">
+                  <i class="fas fa-save me-2"></i>
+                  {{ mode === 'add' ? 'إضافة التفاصيل' : 'تحديث التفاصيل' }}
+                </span>
+                <span *ngIf="isLoading">
+                  <i class="fas fa-spinner fa-spin me-2"></i>
+                  {{ mode === 'add' ? 'جاري الإضافة...' : 'جاري التحديث...' }}
+                </span>
+              </button>
+
+              <button type="button" class="btn btn-secondary px-4" (click)="goBack()">
+                <i class="fas fa-times me-2"></i> إلغاء
+              </button>
+            </div>
+          </form>
+
+          <!-- قسم التصحيح -->
+          <div class="mt-4 p-3 border rounded bg-light">
+            <h6><i class="fas fa-bug me-2"></i> معلومات التصحيح</h6>
+            <div class="mb-2">
+              <strong>وضع العمل:</strong> {{ mode === 'add' ? 'إضافة' : 'تعديل' }}
+            </div>
+            <div class="mb-2">
+              <strong>معرّف المنتج:</strong> {{ productDetails.productId || 'لم يتم الاختيار' }}
+            </div>
+            <div class="mb-2">
+              <strong>النموذج صالح:</strong>
+              <span [class.text-success]="detailsForm.form.valid"
+                    [class.text-danger]="!detailsForm.form.valid">
+                {{ detailsForm.form.valid ? '✅ نعم' : '❌ لا' }}
+              </span>
+            </div>
+            <div class="mb-2">
+              <strong>حالة التحميل:</strong>
+              <span [class.text-success]="!isLoading"
+                    [class.text-danger]="isLoading">
+                {{ isLoading ? '⏳ جاري العمل...' : '✅ جاهز' }}
+              </span>
+            </div>
+
+            <div class="mt-3">
+              <strong>البيانات الحالية:</strong>
+              <pre class="bg-dark text-white p-3 rounded mt-2" style="font-size: 12px; max-height: 200px; overflow: auto;">
+{{ productDetails | json }}
+              </pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
