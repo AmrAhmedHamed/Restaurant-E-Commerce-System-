@@ -79,7 +79,7 @@ src/
 * **Spring Data JPA** - Database operations
 * **JWT (JSON Web Tokens)** - Secure authentication
 * **Hibernate** - ORM framework
-* **Orcale - Database
+* Orcale - Database
 * **Swagger/OpenAPI 3.0** - API documentation
 * **Lombok** - Reduce boilerplate code
 * **Bean Validation (Jakarta)** - Input validation
@@ -191,8 +191,8 @@ cd project905
 
 2. Configure database in `application.properties`
 ```properties
-   spring.datasource.driver-class-name: oracle.jdbc.OracleDriver
-  spring.datasource.url: jdbc:oracle:thin:@//localhost:1521/orclpdb
+spring.datasource.driver-class-name: oracle.jdbc.OracleDriver
+spring.datasource.url: jdbc:oracle:thin:@//localhost:1521/orclpdb
 spring.datasource.username=your_username
 spring.datasource.password=your_password
 ```
@@ -236,9 +236,6 @@ http://localhost:9090/swagger-ui.html
 * Email: amrhamed456@gmail.com
 * LinkedIn: [amr-ahmed-550a3a340](https://www.linkedin.com/in/amr-ahmed-550a3a340)
 
-## 📄 License
-
-This project is licensed under the Restaurant License - see the LICENSE file for details
 
 ## 🤝 Contributing
 
